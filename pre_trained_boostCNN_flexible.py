@@ -387,6 +387,7 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 	optimizer = torch.optim.Adam(model_2.parameters(),args.lr_dis)
 	model_2.train()
 	acc2 = 0.0
+	optimizer.zero_grad()
 	for epoch in trange(args.epochs):
 		lo = 0.0
 		top1 = AverageMeter('Acc@1', ':6.2f')
@@ -402,14 +403,16 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 
 			lo += loss.data
 			# compute gradient and do SGD step
-			optimizer.zero_grad()
 			loss.backward()
-			optimizer.step()
+			if i%args.gradient_acc == 0:
+				optimizer.step()
+				optimizer.zero_grad()
 		if top1.avg > acc2:
 			acc2 = top1.avg
 			torch.save(model_2, 'initial_model_'+ args.model_save)
 		print('iteration ' + str(epoch) + ': ' + str(lo.data) + '\t' + 'accuracy: ' + str(top1.avg))
 	print('oneCNN optimization done')
+	optimizer.zero_grad()
 	#l = input('l')
 	model.cpu()
 	model = None
@@ -491,6 +494,7 @@ def train(train_loader, model, criterion, optimizer, epoch, args):
 	model.train()
 
 	end = time.time()
+	optimizer.zero_grad()
 	for i, (images, target) in enumerate(tqdm(train_loader)):
 		# measure data loading time
 		data_time.update(time.time() - end)
@@ -511,9 +515,10 @@ def train(train_loader, model, criterion, optimizer, epoch, args):
 		top5.update(acc5[0], images.size(0))
 
 		# compute gradient and do SGD step
-		optimizer.zero_grad()
 		loss.backward()
-		optimizer.step()
+		if i%args.gradient_acc == 0:
+			optimizer.step()
+			optimizer.zero_grad()
 
 		# measure elapsed time
 		batch_time.update(time.time() - end)
@@ -521,6 +526,7 @@ def train(train_loader, model, criterion, optimizer, epoch, args):
 
 		if i % args.print_freq == 0:
 			progress.display(i)
+	optimizer.zero_grad()
 
 
 def validate(val_loader, model, criterion, args, Flag = False):
@@ -598,12 +604,14 @@ def train_boost( train_loader_seq, weight_loader, weight_dataset, train_dataset,
 
 	model.weight_fun(train_dataset,weight_dataset, k, g)
 
+	optimizer.zero_grad()
+
 	for epoch in trange(args.epochs):
 		for i, ( (images, _), (weight,)) in enumerate( tqdm(zip(train_loader_seq , weight_loader)) ):
 			# measure data loading time
 			data_time.update(time.time() - end)
 
-
+			'''
 			if k == 1:
 				images = images[:, :, :168, :168]
 			elif k == 2:
@@ -612,6 +620,7 @@ def train_boost( train_loader_seq, weight_loader, weight_dataset, train_dataset,
 				images = images[:, :, 56:, :169]
 			elif k == 4:
 				images = images[:, :, 56:, 56:]
+			'''
 			
 
 			images = images.cuda()
@@ -620,7 +629,7 @@ def train_boost( train_loader_seq, weight_loader, weight_dataset, train_dataset,
 
 
 			# compute output
-			loss = model(images, weight, k)
+			loss = model(images, weight, k)/args.gradient_acc
 			#output = model.predict(images, k-1)       
 
 			# measure accuracy and record loss
@@ -630,9 +639,10 @@ def train_boost( train_loader_seq, weight_loader, weight_dataset, train_dataset,
 			#top5.update(acc5[0], images.size(0))
 
 			# compute gradient and do SGD step
-			optimizer.zero_grad()
 			loss.backward()
-			optimizer.step()
+			if i%args.gradient_acc == 0:
+				optimizer.step()
+				optimizer.zero_grad()
 
 			# measure elapsed time
 			batch_time.update(time.time() - end)
@@ -640,10 +650,11 @@ def train_boost( train_loader_seq, weight_loader, weight_dataset, train_dataset,
 
 			#if (i+1) % args.print_freq == 0:
 			#    progress.display(i)
+	optimizer.zero_grad()
 	g = []
 	model.eval()
 	for i, ( (images, _), (weight,)) in enumerate(zip(train_loader_seq , weight_loader) ):
-
+		'''
 		if k == 1:
 			images = images[:, :, :168, :168]
 		elif k == 2:
@@ -652,7 +663,7 @@ def train_boost( train_loader_seq, weight_loader, weight_dataset, train_dataset,
 			images = images[:, :, 56:, :169]
 		elif k == 4:
 			images = images[:, :, 56:, 56:]
-
+		'''
 		images = images.cuda()
 		weight = weight.cuda()
 		with torch.no_grad():
