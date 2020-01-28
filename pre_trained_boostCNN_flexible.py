@@ -112,7 +112,7 @@ best_acc1 = 0
 
 def main(args, actions):
 	#args = parser.parse_args()
-
+	print(actions)
 	image_pf, input_size, CNN_one, CNN_two, CNN_three = actions
 
 	if args.seed is not None:
