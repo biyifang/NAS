@@ -89,7 +89,7 @@ args = parser.parse_args()
 policy_sess = tf.compat.v1.Session()
 K.set_session(policy_sess)
 
-NUM_LAYERS = 3  # number of layers of the state space
+NUM_LAYERS = 1  # number of layers of the state space
 MAX_TRIALS = 2  # maximum number of models generated
 MAX_EPOCHS = 10  # maximum number of epochs to train
 CHILD_BATCHSIZE = 128  # batchsize of the child models
