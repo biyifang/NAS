@@ -135,7 +135,7 @@ with policy_sess.as_default():
                             restore_controller=RESTORE_CONTROLLER)
 
 # create the Network Manager
-manager = CNNEnv(dataset, epochs=MAX_EPOCHS, child_batchsize=CHILD_BATCHSIZE, clip_rewards=CLIP_REWARDS, acc_beta=ACCURACY_BETA, args)
+manager = CNNEnv(dataset, args, epochs=MAX_EPOCHS, child_batchsize=CHILD_BATCHSIZE, clip_rewards=CLIP_REWARDS, acc_beta=ACCURACY_BETA)
 
 # get an initial random state space if controller needs to predict an
 # action from the initial state
