@@ -144,12 +144,12 @@ def main(args, actions):
 		mp.spawn(main_worker, nprocs=ngpus_per_node, args=(ngpus_per_node, args))
 	else:
 		# Simply call main_worker function
-		acc = main_worker(args.gpu, ngpus_per_node, args)
+		acc = main_worker(args.gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_two, CNN_three)
 
 	return acc
 
 
-def main_worker(gpu, ngpus_per_node, args):
+def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_two, CNN_three):
 	global best_acc1
 	args.gpu = gpu
 
@@ -247,7 +247,7 @@ def main_worker(gpu, ngpus_per_node, args):
 
 	
 	train_dataset = datasets.CIFAR10(args.data, train=True, transform=transforms.Compose([
-			transforms.RandomResizedCrop(args.input_size, scale=(args.image_pf, args.image_pf)),
+			transforms.RandomResizedCrop(input_size, scale=(image_pf, image_pf)),
 			transforms.RandomHorizontalFlip(),
 			transforms.ToTensor(),
 			normalize,
@@ -290,7 +290,7 @@ def main_worker(gpu, ngpus_per_node, args):
 	
 	val_loader = torch.utils.data.DataLoader(datasets.CIFAR10(args.data, train=False, transform=transforms.Compose([
 			#transforms.RandomResizedCrop(224),
-			transforms.RandomResizedCrop(args.input_size, scale=(args.image_pf, args.image_pf)),
+			transforms.RandomResizedCrop(input_size, scale=(image_pf, image_pf)),
 			#transforms.RandomHorizontalFlip(),
 			transforms.ToTensor(),
 			normalize,
@@ -424,15 +424,15 @@ def main_worker(gpu, ngpus_per_node, args):
 
 	model_2 = torch.load('initial_model_' + args.model_save)
 	#model_list = [copy.deepcopy(model_2) for _ in range(args.num_boost_iter)]
-	inter_media_1 = kernel_fun(args.input_size, args.CNN_one, 4, 2)
+	inter_media_1 = kernel_fun(input_size, CNN_one, 4, 2)
 	inter_media_two = maxpool_fun(inter_media_1, 3, 2)
-	inter_media_3 = kernel_fun(inter_media_two, args.CNN_two, 2, 2)
+	inter_media_3 = kernel_fun(inter_media_two, CNN_two, 2, 2)
 	inter_media_4 = maxpool_fun(inter_media_3, 2, 2)
-	inter_media_5 = kernel_fun(inter_media_4, 2, 2, 2)
+	inter_media_5 = kernel_fun(inter_media_4, CNN_three, 2, 2)
 	inter_media_six = maxpool_fun(inter_media_5, 2,1)
 	#print(inter_media_two)
 	#print(inter_media_six)
-	model_2_1 = oneCNN_two(args.CNN_one, args.CNN_two, args.CNN_three, inter_media_two, inter_media_six)
+	model_2_1 = oneCNN_two(CNN_one, CNN_two, CNN_three, inter_media_two, inter_media_six)
 	model_list = [copy.deepcopy(model_2)] + [ copy.deepcopy(model_2_1) for _ in range(args.num_boost_iter)]
 	#model_list = [ copy.deepcopy(model_2_1) for _ in range(args.num_boost_iter)]
 	model_3 = GBM(args.num_boost_iter, args.boost_shrink, model_list)
