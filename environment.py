@@ -29,7 +29,6 @@ class CNNEnv:
             clip_rewards: float - to clip rewards in [-range, range] to prevent
                 large weight updates. Use when training is highly unstable.
         '''
-        self.dataset = dataset
         self.epochs = epochs
         self.batchsize = child_batchsize
         self.clip_rewards = clip_rewards
