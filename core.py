@@ -5,7 +5,7 @@ import tensorflow as tf
 from keras import backend as K
 from keras.datasets import cifar10
 from keras.utils import to_categorical
-
+import torchvision.models as models
 from control import Controller, StateSpace
 from environment import CNNEnv, model_fn
 
