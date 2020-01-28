@@ -247,7 +247,7 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 
 	
 	train_dataset = datasets.CIFAR10(args.data, train=True, transform=transforms.Compose([
-			transforms.RandomResizedCrop(input_size, scale=(image_pf, image_pf)),
+			transforms.RandomResizedCrop(224, scale=(1.0, 1.0)),
 			transforms.RandomHorizontalFlip(),
 			transforms.ToTensor(),
 			normalize,
@@ -290,7 +290,7 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 	
 	val_loader = torch.utils.data.DataLoader(datasets.CIFAR10(args.data, train=False, transform=transforms.Compose([
 			#transforms.RandomResizedCrop(224),
-			transforms.RandomResizedCrop(input_size, scale=(image_pf, image_pf)),
+			transforms.RandomResizedCrop(224, scale=(1.0, 1.0)),
 			#transforms.RandomHorizontalFlip(),
 			transforms.ToTensor(),
 			normalize,
@@ -451,6 +451,40 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 		if args.distributed:
 			train_sampler.set_epoch(epoch)
 		#adjust_learning_rate(optimizer, epoch, args)
+
+
+		if k >= 1:
+			train_dataset = datasets.CIFAR10(args.data, train=True, transform=transforms.Compose([
+					transforms.RandomResizedCrop(input_size, scale=(image_pf, image_pf)),
+					transforms.RandomHorizontalFlip(),
+					transforms.ToTensor(),
+					normalize,
+				]), target_transform=None, download=True)
+
+			if args.distributed:
+				train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset)
+			else:
+				train_sampler = None
+				train_sampler_seq = torch.utils.data.SequentialSampler(train_dataset)
+				weight_sampler = torch.utils.data.SequentialSampler(weight_dataset )
+
+			train_loader = torch.utils.data.DataLoader(
+				train_dataset, batch_size=args.batch_size, sampler=train_sampler)
+			train_loader_seq = torch.utils.data.DataLoader(
+				train_dataset, batch_size=args.batch_size, sampler=train_sampler_seq)
+
+	
+			val_loader = torch.utils.data.DataLoader(datasets.CIFAR10(args.data, train=False, transform=transforms.Compose([
+					#transforms.RandomResizedCrop(224),
+					transforms.RandomResizedCrop(input_size, scale=(image_pf, image_pf)),
+					#transforms.RandomHorizontalFlip(),
+					transforms.ToTensor(),
+					normalize,
+				]), target_transform=None, download=False), batch_size=args.batch_size, shuffle=False,
+				num_workers=args.workers, pin_memory=True)
+
+
+
 
 		# train for one epoch
 		f, g = train_boost(train_loader_seq,weight_loader,weight_dataset, train_dataset, model_3, optimizer_list, k, f, g, args)
