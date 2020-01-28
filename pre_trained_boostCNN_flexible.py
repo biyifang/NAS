@@ -24,7 +24,7 @@ from model_flexible import oneCNN_two
 from model_flexible import GBM
 from torch.utils.data import TensorDataset
 
-
+'''
 model_names = sorted(name for name in models.__dict__
 	if name.islower() and not name.startswith("__")
 	and callable(models.__dict__[name]))
@@ -106,13 +106,13 @@ parser.add_argument('--multiprocessing-distributed', action='store_true',
 						 'N processes per node, which has N GPUs. This is the '
 						 'fastest way to use PyTorch for either single node or '
 						 'multi node data parallel training')
-
+'''
 best_acc1 = 0
 
 
 def main(args, actions):
-	args = parser.parse_args()
-	#print(actions)
+	#args = parser.parse_args()
+	print(actions)
 	image_pf, input_size, CNN_one, CNN_two, CNN_three = actions
 
 	if args.seed is not None:
