@@ -114,6 +114,7 @@ state_space.add_state(name='CNN_two', values=[2,3,4,5])
 state_space.add_state(name='CNN_three', values=[2,3,4,5])
 state_space.print_state_space()
 
+'''
 (x_train, y_train), (x_test, y_test) = cifar10.load_data()
 x_train = x_train.astype('float32') / 255.
 x_test = x_test.astype('float32') / 255.
@@ -121,6 +122,7 @@ y_train = to_categorical(y_train, 10)
 y_test = to_categorical(y_test, 10)
 
 dataset = [x_train, y_train, x_test, y_test]
+'''
 
 previous_acc = 0.0
 total_reward = 0.0
@@ -135,7 +137,7 @@ with policy_sess.as_default():
                             restore_controller=RESTORE_CONTROLLER)
 
 # create the Network Manager
-manager = CNNEnv(dataset, args, epochs=MAX_EPOCHS, child_batchsize=CHILD_BATCHSIZE, clip_rewards=CLIP_REWARDS, acc_beta=ACCURACY_BETA)
+manager = CNNEnv(args, epochs=MAX_EPOCHS, child_batchsize=CHILD_BATCHSIZE, clip_rewards=CLIP_REWARDS, acc_beta=ACCURACY_BETA)
 
 # get an initial random state space if controller needs to predict an
 # action from the initial state
