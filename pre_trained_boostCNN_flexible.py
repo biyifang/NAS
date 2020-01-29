@@ -425,7 +425,6 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 
 
 
-	print(args.model_save)
 	model_2 = torch.load('initial_model_' + args.model_save)
 	model_2.cpu()
 	#model_list = [copy.deepcopy(model_2) for _ in range(args.num_boost_iter)]
@@ -443,6 +442,7 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 	model_3 = GBM(args.num_boost_iter, args.boost_shrink, model_list)
 	model_3.cpu()
 	model_3.train()
+	l = input('l')
 	optimizer_list = [torch.optim.SGD(it.parameters(), args.lr_boost,
 								momentum=args.momentum,
 								weight_decay=args.weight_decay) for it in model_3.weak_learners]
