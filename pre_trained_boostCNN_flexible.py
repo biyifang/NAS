@@ -419,7 +419,6 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 	model = None
 
 	# boosted CNN
-	model_2.cpu()
 	'''
 	
 	output_file = open('out.txt','w')
@@ -428,6 +427,7 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 
 	print(args.model_save)
 	model_2 = torch.load('initial_model_' + args.model_save)
+	model_2.cpu()
 	#model_list = [copy.deepcopy(model_2) for _ in range(args.num_boost_iter)]
 	inter_media_1 = kernel_fun(input_size, CNN_one, 4, 2)
 	inter_media_two = maxpool_fun(inter_media_1, 3, 2)
