@@ -278,8 +278,9 @@ class GBM(nn.Module):
 					x_1 = x[:, :, 56:, :169]
 				elif i == 4:
 					x_1 = x[:, :, 56:, 56:]
-				'''
 				pred += net.forward(x_1) * self.alpha[i]*self.gamma
+				'''
+				pred += net.forward(x) * self.alpha[i]*self.gamma
 			net.cpu()
 		#_, index = torch.max(pred, 0)
 		return pred

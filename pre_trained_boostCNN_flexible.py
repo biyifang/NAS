@@ -442,7 +442,6 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 	model_3 = GBM(args.num_boost_iter, args.boost_shrink, model_list)
 	model_3.cpu()
 	model_3.train()
-	l = input('l')
 	optimizer_list = [torch.optim.SGD(it.parameters(), args.lr_boost,
 								momentum=args.momentum,
 								weight_decay=args.weight_decay) for it in model_3.weak_learners]
@@ -484,7 +483,7 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 					normalize,
 				]), target_transform=None, download=False), batch_size=args.batch_size, shuffle=False,
 				num_workers=args.workers, pin_memory=True)
-
+		print('dataset produced')
 
 
 
