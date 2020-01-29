@@ -247,7 +247,7 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 
 	
 	train_dataset = datasets.CIFAR10(args.data, train=True, transform=transforms.Compose([
-			transforms.RandomResizedCrop(224),
+			transforms.RandomResizedCrop(224, scale=(1.0, 1.0)),
 			transforms.RandomHorizontalFlip(),
 			transforms.ToTensor(),
 			normalize,
@@ -290,7 +290,7 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 	
 	val_loader = torch.utils.data.DataLoader(datasets.CIFAR10(args.data, train=False, transform=transforms.Compose([
 			#transforms.RandomResizedCrop(224),
-			transforms.RandomResizedCrop(224),
+			transforms.RandomResizedCrop(224, scale=(1.0, 1.0)),
 			#transforms.RandomHorizontalFlip(),
 			transforms.ToTensor(),
 			normalize,
@@ -370,6 +370,7 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 		#l = input('l')
 	'''
 
+	'''
 	#if have teacher model, no need to do step one
 	model = torch.load('teacher_model_resnet18')
 	_, new_predict = validate(train_loader, model, criterion, args, True)
@@ -419,6 +420,7 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 
 	# boosted CNN
 	model_2.cpu()
+	'''
 	
 	output_file = open('out.txt','w')
 
