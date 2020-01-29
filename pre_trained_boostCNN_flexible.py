@@ -483,7 +483,7 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 					normalize,
 				]), target_transform=None, download=False), batch_size=args.batch_size, shuffle=False,
 				num_workers=args.workers, pin_memory=True)
-		print('dataset produced')
+		print('dataset produced'+'\n')
 
 
 
