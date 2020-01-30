@@ -271,6 +271,7 @@ class GBM(nn.Module):
 		print(previous_prob.size())
 		print('weak learner size')
 		print(self.weak_learners[k].forward(x).size())
+		print(x.size())
 		previous_prob += self.weak_learners[k].forward(x) * self.alpha[k]*self.gamma
 		self.weak_learners[k].cpu()
 		'''
