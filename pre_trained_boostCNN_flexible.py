@@ -519,7 +519,7 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 			}, is_best)
 	#output_file.close()
 
-	return best_acc1.item()
+	return acc1.item()
 
 
 
