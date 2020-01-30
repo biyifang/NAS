@@ -452,7 +452,6 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 								weight_decay=args.weight_decay) for it in model_3.weak_learners]
 	g = None
 	f = torch.zeros(len(train_dataset), args.num_class)
-	previous_prob = torch.zeros(args.batch_size, args.num_class)
 
 	for k in trange(0,args.num_boost_iter):
 		if args.distributed:
@@ -497,7 +496,7 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 		f, g = train_boost(train_loader_seq,weight_loader,weight_dataset, train_dataset, model_3, optimizer_list, k, f, g, args)
 		print('train done' + '\n')
 		# evaluate on validation set
-		acc1, previous_prob = validate_boost(val_loader, model_3, criterion, args, k, probability_loader)
+		acc1 = validate_boost(val_loader, model_3, criterion, args, k, probability_loader)
 		print('valida done' + '\n')
 		output_file.write('Iteration {} * Acc@1 {:5.5f} '
 			  .format(k, acc1))
@@ -740,6 +739,7 @@ def validate_boost(val_loader, model, criterion, args, k, prob_load):
 
 			images = images.cuda()
 			target = target.cuda()
+			prob = prob[0]
 			#prob_g = prob.cuda()
 
 			# compute output
@@ -767,7 +767,7 @@ def validate_boost(val_loader, model, criterion, args, k, prob_load):
 		print(' * Acc@1 {top1.avg:.3f} Acc@5 {top5.avg:.3f}'
 			  .format(top1=top1, top5=top5))
 
-	return top1.avg, output
+	return top1.avg
 
 
 def save_checkpoint(state, is_best, filename='checkpoint.pth.tar'):
