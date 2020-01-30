@@ -261,13 +261,18 @@ class GBM(nn.Module):
 			error = torch.abs(loss_temp1 - loss_temp2)
 		#self.alpha.append((temp1 + temp2)/2) plane
 		self.alpha.append((temp1 + temp2)/(2*gamma))
-	def predict(self, x, k):
-		pred = next(self.weak_learners.parameters())
-		pred = pred.new_zeros(x.size(0), self.num_classes).cuda()
+	def predict(self, x, k, previous_prob):
+		previous_prob.cuda()
+		#pred = next(self.weak_learners.parameters())
+		#pred = pred.new_zeros(x.size(0), self.num_classes).cuda()
+		self.weak_learners[k].cuda()
+		previous_prob += net.forward(x) * self.alpha[i]*self.gamma
+		self.weak_learners[k].cpu()
+		'''
 		for i,net in enumerate(self.weak_learners):
-			net.cuda()
-			if i <= k:
-				'''
+			if i = k:
+				net.cuda()
+				
 				if i == 0:
 					x_1 = x
 				elif i == 1:
@@ -279,11 +284,13 @@ class GBM(nn.Module):
 				elif i == 4:
 					x_1 = x[:, :, 56:, 56:]
 				pred += net.forward(x_1) * self.alpha[i]*self.gamma
-				'''
-				pred += net.forward(x) * self.alpha[i]*self.gamma
-			net.cpu()
+				
+				previous_prob += net.forward(x) * self.alpha[i]*self.gamma
+				net.cpu()
 		#_, index = torch.max(pred, 0)
-		return pred
+		'''
+		previous_prob.cpu()
+		return previous_prob
 
 
 

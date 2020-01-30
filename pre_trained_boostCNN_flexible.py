@@ -447,6 +447,7 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 								weight_decay=args.weight_decay) for it in model_3.weak_learners]
 	g = None
 	f = torch.zeros(len(train_dataset), args.num_class)
+	previous_prob = torch.zeros(len(train_dataset), args.num_class)
 
 	for k in trange(0,args.num_boost_iter):
 		if args.distributed:
@@ -489,8 +490,10 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 
 		# train for one epoch
 		f, g = train_boost(train_loader_seq,weight_loader,weight_dataset, train_dataset, model_3, optimizer_list, k, f, g, args)
+		print('train done' + '\n')
 		# evaluate on validation set
-		acc1 = validate_boost(val_loader, model_3, criterion, args, k)
+		acc1, previous_prob = validate_boost(val_loader, model_3, criterion, args, k, previous_prob)
+		print('valida done' + '\n')
 		output_file.write('Iteration {} * Acc@1 {:5.5f} '
 			  .format(k, acc1))
 
@@ -713,7 +716,7 @@ def train_boost( train_loader_seq, weight_loader, weight_dataset, train_dataset,
 
 
 
-def validate_boost(val_loader, model, criterion, args, k):
+def validate_boost(val_loader, model, criterion, args, k, previous_prob):
 	batch_time = AverageMeter('Time', ':6.3f')
 	losses = AverageMeter('Loss', ':.4e')
 	top1 = AverageMeter('Acc@1', ':6.2f')
@@ -734,7 +737,7 @@ def validate_boost(val_loader, model, criterion, args, k):
 			target = target.cuda()
 
 			# compute output
-			output = model.predict(images, k)
+			output = model.predict(images, k, previous_prob)
 			#output = output/args.temperature
 			loss = criterion(output, target)
 
@@ -755,7 +758,7 @@ def validate_boost(val_loader, model, criterion, args, k):
 		print(' * Acc@1 {top1.avg:.3f} Acc@5 {top5.avg:.3f}'
 			  .format(top1=top1, top5=top5))
 
-	return top1.avg
+	return top1.avg, output
 
 
 def save_checkpoint(state, is_best, filename='checkpoint.pth.tar'):
