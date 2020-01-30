@@ -747,7 +747,7 @@ def validate_boost(val_loader, model, criterion, args, k, prob_load):
 			print(i)
 			# compute output
 			output = model.predict(images, k, prob)
-			for j in range(args.batch_size):
+			for j in range(prob.size()[0]):
 				prob[j] = output[j]
 			print('output size')
 			print(output.size())
