@@ -746,6 +746,7 @@ def validate_boost(val_loader, model, criterion, args, k, prob_load):
 			output = model.predict(images, k, prob)
 			for i in range(args.batch_size):
 				prob[i] = output[i]
+			print('output size')
 			print(output.size())
 			output = output.cuda()
 			#output = output/args.temperature
