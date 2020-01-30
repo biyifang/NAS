@@ -289,7 +289,7 @@ class GBM(nn.Module):
 				net.cpu()
 		#_, index = torch.max(pred, 0)
 		'''
-		previous_prob.cpu()
+		previous_prob = previous_prob.cpu()
 		return previous_prob
 
 
