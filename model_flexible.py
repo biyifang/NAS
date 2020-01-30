@@ -261,10 +261,11 @@ class GBM(nn.Module):
 			error = torch.abs(loss_temp1 - loss_temp2)
 		#self.alpha.append((temp1 + temp2)/2) plane
 		self.alpha.append((temp1 + temp2)/(2*gamma))
-	def predict(self, x, k, previous_prob):
-		previous_prob = previous_prob.cuda()
+	def predict(self, x, k, prob):
+		#previous_prob = previous_prob.cuda()
 		#pred = next(self.weak_learners.parameters())
 		#pred = pred.new_zeros(x.size(0), self.num_classes).cuda()
+		previous_prob = prob.cuda()
 		self.weak_learners[k].cuda()
 		previous_prob += self.weak_learners[k].forward(x) * self.alpha[k]*self.gamma
 		self.weak_learners[k].cpu()
@@ -289,8 +290,8 @@ class GBM(nn.Module):
 				net.cpu()
 		#_, index = torch.max(pred, 0)
 		'''
-		previous_prob = previous_prob.cpu()
-		return previous_prob
+		#previous_prob = previous_prob.cpu()
+		return previous_prob.cpu()
 
 
 

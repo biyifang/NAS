@@ -262,6 +262,8 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 	'''
 	weight = torch.zeros(len(train_dataset), args.num_class)
 	weight_dataset = torch.utils.data.TensorDataset(weight)
+	probability = torch.zeros(len(train_dataset), args.num_class)
+	probability_dataset = torch.utils.data.TensorDataset(probability)
 	"""
 	train_dataset = datasets.ImageFolder(
 		traindir,
@@ -279,6 +281,7 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 		train_sampler = None
 		train_sampler_seq = torch.utils.data.SequentialSampler(train_dataset)
 		weight_sampler = torch.utils.data.SequentialSampler(weight_dataset )
+		probability_sampler = torch.utils.data.SequentialSampler(probability_dataset )
 
 	train_loader = torch.utils.data.DataLoader(
 		train_dataset, batch_size=args.batch_size, sampler=train_sampler)
@@ -286,6 +289,8 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 		train_dataset, batch_size=args.batch_size, sampler=train_sampler_seq)
 	weight_loader = torch.utils.data.DataLoader(
 		 weight_dataset, batch_size=args.batch_size, sampler=weight_sampler)
+	probability_loader = torch.utils.data.DataLoader(
+		 probability_dataset, batch_size=args.batch_size, sampler=probability_sampler)
 
 	
 	val_loader = torch.utils.data.DataLoader(datasets.CIFAR10(args.data, train=False, transform=transforms.Compose([
@@ -492,7 +497,7 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 		f, g = train_boost(train_loader_seq,weight_loader,weight_dataset, train_dataset, model_3, optimizer_list, k, f, g, args)
 		print('train done' + '\n')
 		# evaluate on validation set
-		acc1, previous_prob = validate_boost(val_loader, model_3, criterion, args, k, previous_prob)
+		acc1, previous_prob = validate_boost(val_loader, model_3, criterion, args, k, probability_loader)
 		print('valida done' + '\n')
 		output_file.write('Iteration {} * Acc@1 {:5.5f} '
 			  .format(k, acc1))
@@ -716,7 +721,7 @@ def train_boost( train_loader_seq, weight_loader, weight_dataset, train_dataset,
 
 
 
-def validate_boost(val_loader, model, criterion, args, k, previous_prob):
+def validate_boost(val_loader, model, criterion, args, k, prob_load):
 	batch_time = AverageMeter('Time', ':6.3f')
 	losses = AverageMeter('Loss', ':.4e')
 	top1 = AverageMeter('Acc@1', ':6.2f')
@@ -731,13 +736,16 @@ def validate_boost(val_loader, model, criterion, args, k, previous_prob):
 
 	with torch.no_grad():
 		end = time.time()
-		for i, (images, target) in enumerate(val_loader):
+		for i, ((images, target), prob) in enumerate(zip(val_loader, prob_load)):
 
 			images = images.cuda()
 			target = target.cuda()
+			#prob_g = prob.cuda()
 
 			# compute output
-			output = model.predict(images, k, previous_prob)
+			output = model.predict(images, k, prob)
+			for i in range(args.batch_size):
+				prob[i] = output[i]
 			print(output.size())
 			#output = output/args.temperature
 			loss = criterion(output, target)
