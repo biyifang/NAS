@@ -793,7 +793,6 @@ def kernel_fun(orig_size, kern, stri, pad):
 
 
 def maxpool_fun(orig_size, kern, stri):
-	print((orig_size - (kern - 1) - 1)/stri)
 	return int((orig_size - (kern - 1) - 1)/stri + 1)
 
 
