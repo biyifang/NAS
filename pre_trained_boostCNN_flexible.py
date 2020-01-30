@@ -260,7 +260,6 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 		normalize,
 	]), target_transform=None, download=True)
 	'''
-	print(len(train_dataset))
 	weight = torch.zeros(len(train_dataset), args.num_class)
 	weight_dataset = torch.utils.data.TensorDataset(weight)
 	"""
@@ -300,7 +299,6 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 	val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False,
 		num_workers=args.workers, pin_memory=True)
 	probability = torch.zeros(len(val_dataset), args.num_class)
-	print(len(val_dataset))
 	probability_dataset = torch.utils.data.TensorDataset(probability)
 	probability_sampler = torch.utils.data.SequentialSampler(probability_dataset )
 	probability_loader = torch.utils.data.DataLoader(
@@ -746,11 +744,11 @@ def validate_boost(val_loader, model, criterion, args, k, prob_load):
 			prob = prob[0]
 			#prob_g = prob.cuda()
 
+			print(i)
 			# compute output
 			output = model.predict(images, k, prob)
 			for j in range(args.batch_size):
 				prob[j] = output[j]
-			print(i)
 			print('output size')
 			print(output.size())
 			output = output.cuda()
