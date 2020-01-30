@@ -262,7 +262,7 @@ class GBM(nn.Module):
 		#self.alpha.append((temp1 + temp2)/2) plane
 		self.alpha.append((temp1 + temp2)/(2*gamma))
 	def predict(self, x, k, previous_prob):
-		previous_prob.cuda()
+		previous_prob = previous_prob.cuda()
 		#pred = next(self.weak_learners.parameters())
 		#pred = pred.new_zeros(x.size(0), self.num_classes).cuda()
 		self.weak_learners[k].cuda()
