@@ -266,7 +266,7 @@ class GBM(nn.Module):
 		#pred = next(self.weak_learners.parameters())
 		#pred = pred.new_zeros(x.size(0), self.num_classes).cuda()
 		self.weak_learners[k].cuda()
-		previous_prob += net.forward(x) * self.alpha[i]*self.gamma
+		previous_prob += self.weak_learners[k].forward(x) * self.alpha[i]*self.gamma
 		self.weak_learners[k].cpu()
 		'''
 		for i,net in enumerate(self.weak_learners):
