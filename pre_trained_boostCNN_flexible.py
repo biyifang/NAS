@@ -438,9 +438,13 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 	inter_media_1 = kernel_fun(input_size, CNN_one, 4, 2)
 	inter_media_two = maxpool_fun(inter_media_1, 3, 2)
 	inter_media_3 = kernel_fun(inter_media_two, CNN_two, 2, 2)
+	print(inter_media_3)
 	inter_media_4 = maxpool_fun(inter_media_3, 2, 2)
+	print(inter_media_4)
 	inter_media_5 = kernel_fun(inter_media_4, CNN_three, 2, 2)
+	print(inter_media_5)
 	inter_media_six = maxpool_fun(inter_media_5, 2,1)
+	print(inter_media_six)
 	#print(inter_media_two)
 	#print(inter_media_six)
 	model_2_1 = oneCNN_two(CNN_one, CNN_two, CNN_three, inter_media_two, inter_media_six)
@@ -744,13 +748,10 @@ def validate_boost(val_loader, model, criterion, args, k, prob_load):
 			prob = prob[0]
 			#prob_g = prob.cuda()
 
-			print(i)
 			# compute output
 			output = model.predict(images, k, prob)
 			for j in range(prob.size()[0]):
 				prob[j] = output[j]
-			print('output size')
-			print(output.size())
 			output = output.cuda()
 			#output = output/args.temperature
 			loss = criterion(output, target)
