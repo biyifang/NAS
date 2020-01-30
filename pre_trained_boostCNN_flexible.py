@@ -440,18 +440,11 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 	CNN_three = 2
 	#model_list = [copy.deepcopy(model_2) for _ in range(args.num_boost_iter)]
 	inter_media_1 = kernel_fun(input_size, CNN_one, 4, 2)
-	#print(inter_media_1)
 	inter_media_two = maxpool_fun(inter_media_1, 3, 2)
-	print(inter_media_two)
 	inter_media_3 = kernel_fun(inter_media_two, CNN_two, 2, 2)
-	#print(inter_media_3)
 	inter_media_4 = maxpool_fun(inter_media_3, 2, 2)
-	#print(inter_media_4)
 	inter_media_5 = kernel_fun(inter_media_4, CNN_three, 2, 2)
-	#print(inter_media_5)
 	inter_media_six = maxpool_fun(inter_media_5, 2,1)
-	print(inter_media_six)
-	print(32*inter_media_six*inter_media_six)
 	#print(inter_media_two)
 	#print(inter_media_six)
 	model_2_1 = oneCNN_two(CNN_one, CNN_two, CNN_three, inter_media_two, inter_media_six)
@@ -501,16 +494,13 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 					normalize,
 				]), target_transform=None, download=False), batch_size=args.batch_size, shuffle=False,
 				num_workers=args.workers, pin_memory=True)
-		print('dataset produced'+'\n')
 
 
 
 		# train for one epoch
 		f, g = train_boost(train_loader_seq,weight_loader,weight_dataset, train_dataset, model_3, optimizer_list, k, f, g, args)
-		print('train done' + '\n')
 		# evaluate on validation set
 		acc1 = validate_boost(val_loader, model_3, criterion, args, k, probability_loader)
-		print('valida done' + '\n')
 		output_file.write('Iteration {} * Acc@1 {:5.5f} '
 			  .format(k, acc1))
 
@@ -527,7 +517,7 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 				'best_acc1': best_acc1,
 				'optimizer' : optimizer.state_dict(),
 			}, is_best)
-	output_file.close()
+	#output_file.close()
 
 	return best_acc1
 
