@@ -447,7 +447,7 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 								weight_decay=args.weight_decay) for it in model_3.weak_learners]
 	g = None
 	f = torch.zeros(len(train_dataset), args.num_class)
-	previous_prob = torch.zeros(len(train_dataset), args.num_class)
+	previous_prob = torch.zeros(args.batch_size, args.num_class)
 
 	for k in trange(0,args.num_boost_iter):
 		if args.distributed:
@@ -738,6 +738,7 @@ def validate_boost(val_loader, model, criterion, args, k, previous_prob):
 
 			# compute output
 			output = model.predict(images, k, previous_prob)
+			print(output.size())
 			#output = output/args.temperature
 			loss = criterion(output, target)
 
