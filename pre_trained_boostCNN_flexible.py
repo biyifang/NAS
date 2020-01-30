@@ -519,7 +519,7 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 			}, is_best)
 	#output_file.close()
 
-	return best_acc1
+	return best_acc1.eval()
 
 
 
@@ -763,8 +763,10 @@ def validate_boost(val_loader, model, criterion, args, k, prob_load):
 			batch_time.update(time.time() - end)
 			end = time.time()
 
+			'''
 			if i % args.print_freq == 0:
 				progress.display(i)
+			'''
 
 		# TODO: this should also be done with the ProgressMeter
 		print(' * Acc@1 {top1.avg:.3f} Acc@5 {top5.avg:.3f}'
