@@ -260,10 +260,9 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 		normalize,
 	]), target_transform=None, download=True)
 	'''
+	print(len(train_dataset))
 	weight = torch.zeros(len(train_dataset), args.num_class)
 	weight_dataset = torch.utils.data.TensorDataset(weight)
-	probability = torch.zeros(len(train_dataset), args.num_class)
-	probability_dataset = torch.utils.data.TensorDataset(probability)
 	"""
 	train_dataset = datasets.ImageFolder(
 		traindir,
@@ -281,7 +280,7 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 		train_sampler = None
 		train_sampler_seq = torch.utils.data.SequentialSampler(train_dataset)
 		weight_sampler = torch.utils.data.SequentialSampler(weight_dataset )
-		probability_sampler = torch.utils.data.SequentialSampler(probability_dataset )
+		
 
 	train_loader = torch.utils.data.DataLoader(
 		train_dataset, batch_size=args.batch_size, sampler=train_sampler)
@@ -289,18 +288,23 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 		train_dataset, batch_size=args.batch_size, sampler=train_sampler_seq)
 	weight_loader = torch.utils.data.DataLoader(
 		 weight_dataset, batch_size=args.batch_size, sampler=weight_sampler)
-	probability_loader = torch.utils.data.DataLoader(
-		 probability_dataset, batch_size=args.batch_size, sampler=probability_sampler)
 
 	
-	val_loader = torch.utils.data.DataLoader(datasets.CIFAR10(args.data, train=False, transform=transforms.Compose([
+	val_dataset = datasets.CIFAR10(args.data, train=False, transform=transforms.Compose([
 			#transforms.RandomResizedCrop(224),
 			transforms.RandomResizedCrop(224, scale=(1.0, 1.0)),
 			#transforms.RandomHorizontalFlip(),
 			transforms.ToTensor(),
 			normalize,
-		]), target_transform=None, download=False), batch_size=args.batch_size, shuffle=False,
+		]), target_transform=None, download=False)
+	val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False,
 		num_workers=args.workers, pin_memory=True)
+	probability = torch.zeros(len(val_dataset), args.num_class)
+	print(len(val_dataset))
+	probability_dataset = torch.utils.data.TensorDataset(probability)
+	probability_sampler = torch.utils.data.SequentialSampler(probability_dataset )
+	probability_loader = torch.utils.data.DataLoader(
+		 probability_dataset, batch_size=args.batch_size, sampler=probability_sampler)
 	'''
 	val_loader = torch.utils.data.DataLoader(datasets.MNIST(args.data, train=False, transform=transforms.Compose([
 			transforms.RandomResizedCrop(224),
