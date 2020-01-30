@@ -434,8 +434,13 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 
 	model_2 = torch.load('initial_model_' + args.model_save)
 	model_2.cpu()
+	input_size = 224
+	CNN_one = 3
+	CNN_two = 4
+	CNN_three = 2
 	#model_list = [copy.deepcopy(model_2) for _ in range(args.num_boost_iter)]
 	inter_media_1 = kernel_fun(input_size, CNN_one, 4, 2)
+	print(inter)
 	inter_media_two = maxpool_fun(inter_media_1, 3, 2)
 	inter_media_3 = kernel_fun(inter_media_two, CNN_two, 2, 2)
 	print(inter_media_3)
