@@ -500,6 +500,12 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 		# train for one epoch
 		f, g = train_boost(train_loader_seq,weight_loader,weight_dataset, train_dataset, model_3, optimizer_list, k, f, g, args)
 		# evaluate on validation set
+		if k == args.num_boost_iter:
+			model_3.weight_fun(train_dataset,weight_dataset, k, g)
+			w = weight_dataset.tensors[0]
+			w_norm = torch.norm(w)
+			print('Residule after GBM:' + str(w_norm))
+
 		acc1 = validate_boost(val_loader, model_3, criterion, args, k, probability_loader)
 		output_file.write('Iteration {} * Acc@1 {:5.5f} '
 			  .format(k, acc1))
