@@ -500,7 +500,7 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 		# train for one epoch
 		f, g = train_boost(train_loader_seq,weight_loader,weight_dataset, train_dataset, model_3, optimizer_list, k, f, g, args)
 		# evaluate on validation set
-		if k == args.num_boost_iter:
+		if k == args.num_boost_iter - 1:
 			model_3.weight_fun(train_dataset,weight_dataset, k, g)
 			w = weight_dataset.tensors[0]
 			w_norm = torch.norm(w)
