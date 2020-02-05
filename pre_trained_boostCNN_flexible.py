@@ -654,6 +654,9 @@ def train_boost( train_loader_seq, weight_loader, weight_dataset, train_dataset,
 	end = time.time()
 
 	model.weight_fun(train_dataset,weight_dataset, k, g)
+	w = weight_dataset.tensors[0]
+	w_norm = torch.norm(w)
+	print('Residule after GBM:' + str(w_norm))
 
 	optimizer.zero_grad()
 
