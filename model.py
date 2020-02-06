@@ -82,7 +82,7 @@ class oneCNN(nn.Module):
 		else:
 			f = nn.functional.softmax(x_1,-1)
 			print('soft max')
-			print(f)
+			print(torch.sum(f,1))
 			return nn.functional.softmax(x_1,-1)
 
 
