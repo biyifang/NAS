@@ -80,9 +80,6 @@ class oneCNN(nn.Module):
 			loss = torch.sum(nn.functional.softmax(label, -1)*nn.functional.log_softmax(x_1/temperature,-1), dim=1).mean()
 			return -1.0*loss
 		else:
-			f = nn.functional.softmax(x_1,-1)
-			print('soft max')
-			print(torch.sum(f,1))
 			return nn.functional.softmax(x_1,-1)
 
 
