@@ -654,15 +654,12 @@ def train_boost( train_loader_seq, weight_loader, weight_dataset, train_dataset,
 	end = time.time()
 
 	model.weight_fun(train_dataset,weight_dataset, k, g)
-
-
-	'''
 	w = weight_dataset.tensors[0]
 	w_norm = torch.norm(w)
 	print(model.alpha)
 	print(f[:10,:])
 	print('Residule after GBM:' + str(w_norm))
-	'''
+
 
 
 
@@ -731,12 +728,8 @@ def train_boost( train_loader_seq, weight_loader, weight_dataset, train_dataset,
 		with torch.no_grad():
 			g.append(model(images, weight, k, False).detach())
 	g = torch.cat(g, 0).cpu()
-
-	'''
 	print('g')
 	print(g[:10,:])
-	'''
-	
 	# model.line_search(f, g, train_dataset) plane
 	model.line_search(f, g, train_dataset, model.gamma)
 	f = f + model.gamma*model.alpha[-1] * g
