@@ -376,8 +376,15 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 		print(best_acc1)
 		#l = input('l')
 	'''
+	inter_media_1_0 = kernel_fun(224, CNN_one, 4, 2)
+	inter_media_two_0 = maxpool_fun(inter_media_1_0, 3, 2)
+	inter_media_3_0 = kernel_fun(inter_media_two_0, CNN_two, 2, 2)
+	inter_media_4_0 = maxpool_fun(inter_media_3_0, 2, 2)
+	inter_media_5_0 = kernel_fun(inter_media_4_0, CNN_three, 2, 2)
+	inter_media_six_0 = maxpool_fun(inter_media_5_0, 2,1)
+	model_2 = oneCNN_two(CNN_one, CNN_two, CNN_three, inter_media_two_0, inter_media_six_0)
 
-	'''
+	
 	#if have teacher model, no need to do step one
 	model = torch.load('teacher_model_resnet18')
 	_, new_predict = validate(train_loader, model, criterion, args, True)
@@ -389,7 +396,7 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 
 
 	# one-layer CNN training
-	model_2 = oneCNN()
+	#model_2 = oneCNN()
 	model_2.cuda()
 	#optimizer = torch.optim.SGD(model_2.parameters(), args.lr_dis, momentum=args.momentum, weight_decay=args.weight_decay)
 	optimizer = torch.optim.Adam(model_2.parameters(),args.lr_dis)
@@ -426,7 +433,7 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 	model = None
 
 	# boosted CNN
-	'''
+	
 	
 	output_file = open('out.txt','w')
 
