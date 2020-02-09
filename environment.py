@@ -3,7 +3,7 @@ import numpy as np
 from keras.models import Model
 from keras import backend as K
 from keras.callbacks import ModelCheckpoint
-from pre_trained_boostCNN_flexible import main
+from pre_trained_boostCNN_flexible_total import main
 import tensorflow as tf
 
 from keras.layers import Input, Dense, Conv2D, GlobalAveragePooling2D
