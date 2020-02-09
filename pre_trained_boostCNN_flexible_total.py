@@ -386,13 +386,19 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 
 	
 	#if have teacher model, no need to do step one
-	model = torch.load('teacher_model_resnet18')
-	_, new_predict = validate(train_loader, model, criterion, args, True)
-	new_predict = torch.cat(new_predict)
-	predict_dataset = torch.utils.data.TensorDataset(new_predict)
-	predict_sampler = torch.utils.data.SequentialSampler(predict_dataset )
-	predict_loader = torch.utils.data.DataLoader(
-	predict_dataset, batch_size=args.batch_size, sampler=predict_sampler)
+	flag = 0
+	if flag == 0:
+		model = torch.load('teacher_model_resnet18')
+		model.cuda()
+		_, new_predict = validate(train_loader, model, criterion, args, True)
+		new_predict = torch.cat(new_predict)
+		predict_dataset = torch.utils.data.TensorDataset(new_predict)
+		predict_sampler = torch.utils.data.SequentialSampler(predict_dataset )
+		predict_loader = torch.utils.data.DataLoader(
+		predict_dataset, batch_size=args.batch_size, sampler=predict_sampler)
+		model.cpu()
+		model = None
+		flag = 1
 
 
 	# one-layer CNN training
@@ -429,8 +435,6 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 	print('oneCNN optimization done')
 	optimizer.zero_grad()
 	#l = input('l')
-	model.cpu()
-	model = None
 
 	# boosted CNN
 	
