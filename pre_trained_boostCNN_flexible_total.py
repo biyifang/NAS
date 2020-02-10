@@ -514,7 +514,7 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 					normalize,
 				]), target_transform=None, download=False), batch_size=args.batch_size, shuffle=False,
 				num_workers=args.workers, pin_memory=True)
-			model_list = model_lsit + [copy.deepcopy(model_3.weak_learners[k-1])]
+			model_list = model_list + [copy.deepcopy(model_3.weak_learners[k-1])]
 			#model_list = [ copy.deepcopy(model_2_1) for _ in range(args.num_boost_iter)]
 			model_3 = GBM(args.num_boost_iter, args.boost_shrink, model_list)
 			model_3.cpu()
