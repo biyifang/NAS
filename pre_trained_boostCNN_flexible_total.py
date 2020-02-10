@@ -445,11 +445,14 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 
 	model_2 = torch.load('initial_model_' + args.model_save)
 	model_2.cpu()
-	'''
+	
 	input_size = 224
+	'''
 	CNN_one = 3
 	CNN_two = 4
 	CNN_three = 2
+	'''
+
 	'''
 	#model_list = [copy.deepcopy(model_2) for _ in range(args.num_boost_iter)]
 	inter_media_1 = kernel_fun(input_size, CNN_one, 4, 2)
@@ -460,8 +463,12 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 	inter_media_six = maxpool_fun(inter_media_5, 2,1)
 	#print(inter_media_two)
 	#print(inter_media_six)
+	'''
+	'''
 	model_2_1 = oneCNN_two(CNN_one, CNN_two, CNN_three, inter_media_two, inter_media_six)
 	model_list = [copy.deepcopy(model_2)] + [ copy.deepcopy(model_2_1) for _ in range(args.num_boost_iter)]
+	'''
+	model_list = [copy.deepcopy(model_2)]
 	#model_list = [ copy.deepcopy(model_2_1) for _ in range(args.num_boost_iter)]
 	model_3 = GBM(args.num_boost_iter, args.boost_shrink, model_list)
 	model_3.cpu()
@@ -507,6 +514,14 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 					normalize,
 				]), target_transform=None, download=False), batch_size=args.batch_size, shuffle=False,
 				num_workers=args.workers, pin_memory=True)
+			model_list = model_lsit + [copy.deepcopy(model_3.weak_learners[k-1])]
+			#model_list = [ copy.deepcopy(model_2_1) for _ in range(args.num_boost_iter)]
+			model_3 = GBM(args.num_boost_iter, args.boost_shrink, model_list)
+			model_3.cpu()
+			model_3.train()
+			optimizer_list = [torch.optim.SGD(it.parameters(), args.lr_boost,
+								momentum=args.momentum,
+								weight_decay=args.weight_decay) for it in model_3.weak_learners]
 
 
 
