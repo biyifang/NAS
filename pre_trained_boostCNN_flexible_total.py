@@ -683,8 +683,6 @@ def train_boost( train_loader_seq, weight_loader, weight_dataset, train_dataset,
 
 	end = time.time()
 
-	print(model.alpha)
-
 	model.weight_fun(train_dataset,weight_dataset, k, g)
 	w = weight_dataset.tensors[0]
 	w_norm = torch.norm(w)
@@ -768,10 +766,7 @@ def train_boost( train_loader_seq, weight_loader, weight_dataset, train_dataset,
 	print(g[:10,:])
 	'''
 	# model.line_search(f, g, train_dataset) plane
-	print('start line search')
 	model.line_search(f, g, train_dataset, model.gamma)
-	print(model.alpha)
-	print('end line search')
 	f = f + model.gamma*model.alpha[-1] * g
 	model.weak_learners[k].cpu()
 	return f, g
