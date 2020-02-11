@@ -681,6 +681,8 @@ def train_boost( train_loader_seq, weight_loader, weight_dataset, train_dataset,
 
 	end = time.time()
 
+	print(model.alpha)
+
 	model.weight_fun(train_dataset,weight_dataset, k, g)
 	w = weight_dataset.tensors[0]
 	w_norm = torch.norm(w)
