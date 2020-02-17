@@ -174,7 +174,7 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 		model = models.__dict__[args.arch]()
 		model = models.resnet18(num_classes=10)
 		#model = oneCNN()
-		model.cuda()
+		#model.cuda()
 
 	"""
 	if args.distributed:
@@ -382,7 +382,8 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 	inter_media_4_0 = maxpool_fun(inter_media_3_0, 2, 2)
 	inter_media_5_0 = kernel_fun(inter_media_4_0, CNN_three, 2, 2)
 	inter_media_six_0 = maxpool_fun(inter_media_5_0, 2,1)
-	model_2 = oneCNN_two(CNN_one, CNN_two, CNN_three, inter_media_two_0, inter_media_six_0)
+	#model_2 = oneCNN_two(CNN_one, CNN_two, CNN_three, inter_media_two_0, inter_media_six_0)
+	model_2 = models.resnet18(num_classes=10)
 
 	
 	#if have teacher model, no need to do step one
