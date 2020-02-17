@@ -23,6 +23,7 @@ from model_flexible import oneCNN
 from model_flexible import oneCNN_two
 from model_flexible import GBM
 from model_flexible import ResNet
+from model_flexible import BasicBlock
 from torch.utils.data import TensorDataset
 
 '''
