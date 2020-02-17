@@ -771,7 +771,7 @@ def train_boost( train_loader_seq, weight_loader, weight_dataset, train_dataset,
 		f = f + model.gamma*model.alpha[-1] * g
 	else:
 		model.alpha.append(1.0)
-		f = g
+		f = model.gamma*g
 	model.weak_learners[k].cpu()
 	return f, g
 
