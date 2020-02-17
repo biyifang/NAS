@@ -22,6 +22,7 @@ from tqdm import tqdm,trange
 from model_flexible import oneCNN
 from model_flexible import oneCNN_two
 from model_flexible import GBM
+from model_flexible import ResNet
 from torch.utils.data import TensorDataset
 
 '''
@@ -383,8 +384,7 @@ def main_worker(gpu, ngpus_per_node, args, image_pf, input_size, CNN_one, CNN_tw
 	inter_media_5_0 = kernel_fun(inter_media_4_0, CNN_three, 2, 2)
 	inter_media_six_0 = maxpool_fun(inter_media_5_0, 2,1)
 	#model_2 = oneCNN_two(CNN_one, CNN_two, CNN_three, inter_media_two_0, inter_media_six_0)
-	model_2 = models.resnet18(num_classes=10)
-
+	model_2 = ResNet18()
 	
 	#if have teacher model, no need to do step one
 	flag = 0
@@ -840,6 +840,8 @@ def save_checkpoint(state, is_best, filename='checkpoint.pth.tar'):
 def kernel_fun(orig_size, kern, stri, pad):
 	return int((orig_size + 2*pad - (kern - 1) - 1)/stri + 1)
 
+def ResNet18():
+    return ResNet(BasicBlock, [2,2,2,2])
 
 def maxpool_fun(orig_size, kern, stri):
 	return int((orig_size - (kern - 1) - 1)/stri + 1)
