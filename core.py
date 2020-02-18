@@ -56,7 +56,7 @@ parser.add_argument('--temperature', '--temperature', default=3.0, type=float,
                     metavar='temperature', help='temperature for softmax', dest='temperature')
 parser.add_argument('--momentum', default=0.9, type=float, metavar='M',
                     help='momentum')
-parser.add_argument('--boost_shrink', default=0.99, type=float, metavar='S',
+parser.add_argument('--boost_shrink', default=0.9, type=float, metavar='S',
                     help='boosting shrinkage parameter')
 parser.add_argument('--wd', '--weight-decay', default=1e-4, type=float,
                     metavar='W', help='weight decay (default: 1e-4)',
