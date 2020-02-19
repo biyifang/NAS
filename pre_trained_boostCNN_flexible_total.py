@@ -25,6 +25,7 @@ from model_flexible import GBM
 from model_flexible import ResNet
 from model_flexible import BasicBlock
 from torch.utils.data import TensorDataset
+import matplotlib.pyplot as plt
 
 '''
 model_names = sorted(name for name in models.__dict__
@@ -716,7 +717,8 @@ def train_boost( train_loader_seq, weight_loader, weight_dataset, train_dataset,
 				images = images[:, :, 56:, 56:]
 			'''
 			
-
+			if k == 1:
+				plt.imshow(image.permute(1, 2, 0))
 			images = images.cuda()
 			weight = weight.cuda()
 			#target = target.cuda(args.gpu, non_blocking=True)
