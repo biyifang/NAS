@@ -722,7 +722,7 @@ def train_boost( train_loader_seq, weight_loader, weight_dataset, train_dataset,
 			
 			if k == 1:
 				print(images.size())
-				img = Image.fromarray(images[0].cpu().numpy(), 'RGB')
+				img = Image.fromarray(images[0,0,:,:].cpu().numpy(), 'RGB')
 				img.save('image.png')
 
 			images = images.cuda()
